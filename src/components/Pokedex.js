@@ -15,9 +15,21 @@ class Pokedex extends Component {
     this.setState({ pokemonImage: res.data.sprites.other['official-artwork'].front_default });
   }
 
-  async componentDidUpdate() {
-    const res = await Axios.get(`https://pokeapi.co/api/v2/pokemon/${this.state.pokemonName}`);
-    this.setState({ pokemonImage: res.data.sprites.other['official-artwork'].front_default });
+  async componentDidUpdate(prevProps, prevState) {
+    try {
+      if (this.state.pokemonName === '') {
+        return;
+      }
+      if (prevState.pokemonName === this.state.pokemonName) {
+        return;
+      }
+      const res = await Axios.get(`https://pokeapi.co/api/v2/pokemon/${this.state.pokemonName}`);
+      this.setState({ pokemonImage: res.data.sprites.other['official-artwork'].front_default });
+    } catch (err) {
+      this.setState({
+        pokemonImage: ''
+      });
+    }
   }
 
   render() {
@@ -31,7 +43,7 @@ class Pokedex extends Component {
           }}
         />
         <div>
-          <img src={this.state.pokemonImage} alt={this.state.pokemonName} />
+          <img src={this.state.pokemonImage} />
         </div>
       </div>
     );
